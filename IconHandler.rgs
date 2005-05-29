@@ -1,0 +1,58 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {3BA5A1A3-3B65-4D3E-B99F-2D8E57C9F9D3} = s 'Mozilla Firefox'
+		{
+			val Infotip = s 'Mozilla Firefox'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			ShellEx
+			{
+				ContextMenuHandlers
+				{
+					DefaultMenu = s '{3BA5A1A3-3B65-4D3E-B99F-2D8E57C9F9D3}'
+				}
+				IconHandler = s '{3BA5A1A3-3B65-4D3E-B99F-2D8E57C9F9D3}'
+				MayChangeDefaultMenu = s ''
+			}
+			ShellFolder
+			{
+				val Attributes = d 368
+				val HideOnDesktopPerUser = s ''
+			}
+		}
+	}
+}
+
+HKLM
+{
+	NoRemove Software
+	{
+		NoRemove Microsoft
+		{
+			NoRemove Windows
+			{
+				NoRemove CurrentVersion
+				{
+					NoRemove Explorer
+					{
+						NoRemove Desktop
+						{
+							NoRemove Namespace
+							{
+								ForceRemove {3BA5A1A3-3B65-4D3E-B99F-2D8E57C9F9D3}
+								{
+									val 'Removal Message' = s 'If you wish to re-create this icon, please go to the options in Firefox.'
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+

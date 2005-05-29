@@ -1,0 +1,36 @@
+// DesktopIcon.idl : IDL source for DesktopIcon
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (DesktopIcon.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(5572EC10-344D-4085-956E-0F054D2F8DB3),
+	dual,
+	nonextensible,
+	helpstring("IIconHandler Interface"),
+	pointer_default(unique)
+]
+interface IIconHandler : IDispatch{
+};
+[
+	uuid(AFB13446-1F32-4431-9475-B9EE359479C4),
+	version(1.0),
+	helpstring("DesktopIcon 1.0 Type Library")
+]
+library DesktopIconLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(3BA5A1A3-3B65-4D3E-B99F-2D8E57C9F9D3),
+		helpstring("IconHandler Class")
+	]
+	coclass IconHandler
+	{
+		[default] interface IIconHandler;
+	};
+};
