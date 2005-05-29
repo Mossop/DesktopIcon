@@ -1,0 +1,9 @@
+; DesktopIcon.def : Declares the module parameters.
+
+LIBRARY      "DesktopIcon.DLL"
+
+EXPORTS
+	DllCanUnloadNow		PRIVATE
+	DllGetClassObject	PRIVATE
+	DllRegisterServer	PRIVATE
+	DllUnregisterServer	PRIVATE
