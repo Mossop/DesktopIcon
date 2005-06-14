@@ -1,15 +1,19 @@
+#pragma once
+
+#include "stdafx.h"
+
 struct MENUSTATE
 {
-	wchar_t* Title;
-	wchar_t* Help;
+	LPTSTR Title;
+	LPTSTR Help;
 	BOOL Enabled;
 	BOOL Visible;
 };
 
 struct MENUITEM
 {
-	wchar_t* Verb;
-	wchar_t* Arguments;
-	MENUSTATE ifLoaded;
+	LPTSTR Verb;
+	LPTSTR Arguments;
 	MENUSTATE ifNotLoaded;
+	MENUSTATE ifLoaded;
 };

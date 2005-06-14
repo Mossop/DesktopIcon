@@ -13,7 +13,8 @@ class ATL_NO_VTABLE CIconHandler :
 	public CComCoClass<CIconHandler, &CLSID_IconHandler>,
 	public IShellFolder,
 	public IDropTarget,
-	public IExtractIcon,
+	public IExtractIconW,
+	public IExtractIconA,
 	public IContextMenu,
 	public IShellExtInit,
 	public IQueryInfo,
@@ -33,7 +34,8 @@ BEGIN_COM_MAP(CIconHandler)
 	COM_INTERFACE_ENTRY(IDispatch)
 	COM_INTERFACE_ENTRY(IShellFolder)
 	COM_INTERFACE_ENTRY(IDropTarget)
-	COM_INTERFACE_ENTRY(IExtractIcon)
+	COM_INTERFACE_ENTRY(IExtractIconW)
+	COM_INTERFACE_ENTRY(IExtractIconA)
 	COM_INTERFACE_ENTRY(IContextMenu)
 	COM_INTERFACE_ENTRY(IShellExtInit)
 	COM_INTERFACE_ENTRY(IQueryInfo)
@@ -46,28 +48,46 @@ END_COM_MAP()
 	{
 		firefoxexe=NULL;
 		firefoxdir=NULL;
-		QueryRegistry();
+		FindFirefox();
 		return S_OK;
 	}
 	
 	void FinalRelease() 
 	{
 		if (firefoxexe!=NULL)
-			free(firefoxexe);
+		{
+			delete [] firefoxexe;
+			firefoxexe=NULL;
+		}
 		if (firefoxdir!=NULL)
-			free(firefoxdir);
+		{
+			delete [] firefoxdir;
+			firefoxdir=NULL;
+		}
+	}
+
+	STDMETHOD(InternalQueryInterface)(void *pThis, const _ATL_INTMAP_ENTRY *pEntries, REFIID iid, void **ppvObject)
+	{
+		HRESULT result = CComObjectRootEx<CComSingleThreadModel>::InternalQueryInterface(pThis,pEntries,iid,ppvObject);
+		char text[255];
+		sprintf(text,"QI - {%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X} - %i\n",
+								iid.Data1,
+								iid.Data2,
+								iid.Data3,
+								iid.Data4[0], iid.Data4[1], iid.Data4[2], iid.Data4[3],
+								iid.Data4[4], iid.Data4[5], iid.Data4[6], iid.Data4[7],result);
+		flog(text);
+		return result;
 	}
 
 private:
 
-	wchar_t *firefoxexe;
-	wchar_t *firefoxdir;
-
-	MENUITEM *menus;
+	TCHAR *firefoxexe;
+	TCHAR *firefoxdir;
 
 	void flog(char *text);
 	BOOL CheckLoadState(void);
-	void QueryRegistry(void);
+	void FindFirefox(void);
 
 public:
 
@@ -79,9 +99,13 @@ public:
 	STDMETHOD(InvokeCommand)(LPCMINVOKECOMMANDINFO);
 	STDMETHOD(QueryContextMenu)(HMENU, UINT, UINT, UINT, UINT);
 
-	// IExtractIcon
+	// IExtractIconW
   STDMETHOD(Extract)(LPCWSTR, UINT, HICON*, HICON*, UINT);
   STDMETHOD(GetIconLocation)(UINT, LPWSTR, UINT, int*, UINT*);
+
+	// IExtractIconA
+  STDMETHOD(Extract)(LPCSTR, UINT, HICON*, HICON*, UINT);
+  STDMETHOD(GetIconLocation)(UINT, LPSTR, UINT, int*, UINT*);
 
 	// IQueryInfo
   STDMETHOD(GetInfoFlags)(DWORD*)																										{ return E_NOTIMPL; }

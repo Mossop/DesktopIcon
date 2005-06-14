@@ -2,61 +2,80 @@
 #include "stdafx.h"
 #include "IconHandler.h"
 
+// May need to get this from elsewhere for localisation
+MENUITEM menus[4] = 
+{
+	{
+		_T("open"),
+		_T(""),
+		{
+			_T("&Browse the Internet"),
+			_T("Browse the Internet with Mozilla Firefox"),
+			TRUE,
+			TRUE
+		},
+		{
+			_T("Open a new window"),
+			_T("Open a new Mozilla Firefox window"),
+			TRUE,
+			TRUE
+		},
+	},
+	{
+		_T("profiles"),
+		_T(" -profilemanager"),
+		{
+			_T("&Profile Manager"),
+			_T("Opens the Mozilla Firefox profile manager"),
+			TRUE,
+			TRUE
+		},
+		{
+			_T("Profile Manager"),
+			_T("Opens the Mozilla Firefox profile manager"),
+			FALSE,
+			TRUE
+		},
+	},
+	{
+		_T("safe"),
+		_T(" -safe-mode"),
+		{
+			_T("&Safe Mode"),
+			_T("Opens Mozilla Firefox in safe mode"),
+			TRUE,
+			TRUE
+		},
+		{
+			_T("Safe Mode"),
+			_T("Opens Mozilla Firefox in safe mode"),
+			FALSE,
+			TRUE
+		},
+	},
+	{
+		_T("properties"),
+		_T(" -chrome chrome://browser/content/pref/pref.xul"),
+		{
+			_T("Mozilla Firefox &Options"),
+			_T("Changes settings for Mozilla Firefox"),
+			TRUE,
+			TRUE
+		},
+		{
+			_T("Mozilla Firefox &Options"),
+			_T("Changes settings for Mozilla Firefox"),
+			TRUE,
+			TRUE
+		},
+	}
+};
+
 // Initializes the instance
 STDMETHODIMP CIconHandler::Initialize(LPCITEMIDLIST pidlFolder,
 		IDataObject* pdtobj,
 		HKEY hkeyProgId)
 {
-	flog("Initialize Menus\n");
-
-	// For the moment lets just hardcode the entries
-	menus = new MENUITEM[4];
-	menus = (MENUITEM*)malloc(sizeof(MENUITEM)*4);
-
-	menus[0].ifNotLoaded.Title=L"&Browse the Internet";
-	menus[0].ifNotLoaded.Help=L"Browse the Internet with Mozilla Firefox";
-	menus[0].ifNotLoaded.Enabled=TRUE;
-	menus[0].ifNotLoaded.Visible=TRUE;
-	menus[0].ifLoaded.Title=L"Open a new window";
-	menus[0].ifLoaded.Help=L"Open a new Mozilla Firefox window";
-	menus[0].ifLoaded.Enabled=TRUE;
-	menus[0].ifLoaded.Visible=TRUE;
-	menus[0].Verb=L"open";
-	menus[0].Arguments=L"";
-
-	menus[1].ifNotLoaded.Title=L"&Profile Manager";
-	menus[1].ifNotLoaded.Help=L"Opens the Mozilla Firefox profile manager";
-	menus[1].ifNotLoaded.Enabled=TRUE;
-	menus[1].ifNotLoaded.Visible=TRUE;
-	menus[1].ifLoaded.Title=L"Profile Manager";
-	menus[1].ifLoaded.Help=L"Opens the Mozilla Firefox profile manager";
-	menus[1].ifLoaded.Enabled=FALSE;
-	menus[1].ifLoaded.Visible=TRUE;
-	menus[1].Verb=L"profilemanager";
-	menus[1].Arguments=L" -profilemanager";
-
-	menus[2].ifNotLoaded.Title=L"&Safe Mode";
-	menus[2].ifNotLoaded.Help=L"Opens Mozilla Firefox in safe mode";
-	menus[2].ifNotLoaded.Enabled=TRUE;
-	menus[2].ifNotLoaded.Visible=TRUE;
-	menus[2].ifLoaded.Title=L"Safe Mode";
-	menus[2].ifLoaded.Help=L"Opens Mozilla Firefox in safe mode";
-	menus[2].ifLoaded.Enabled=FALSE;
-	menus[2].ifLoaded.Visible=TRUE;
-	menus[2].Verb=L"safemode";
-	menus[2].Arguments=L" -safe-mode";
-
-	menus[3].ifNotLoaded.Title=L"Mozilla Firefox &Options";
-	menus[3].ifNotLoaded.Help=L"Changes settings for Mozilla Firefox";
-	menus[3].ifNotLoaded.Enabled=TRUE;
-	menus[3].ifNotLoaded.Visible=TRUE;
-	menus[3].ifLoaded.Title=L"Mozilla Firefox &Options";
-	menus[3].ifLoaded.Help=L"Changes settings for Mozilla Firefox";
-	menus[3].ifLoaded.Enabled=TRUE;
-	menus[3].ifLoaded.Visible=TRUE;
-	menus[3].Verb=L"properties";
-	menus[3].Arguments=L" -chrome chrome://browser/content/pref/pref.xul";
-
 	return NOERROR;
 }
 
@@ -90,7 +109,7 @@ STDMETHODIMP CIconHandler::QueryContextMenu(HMENU hmenu,
 		
 		menu.fType=MFT_STRING;
 		menu.dwTypeData=state->Title;
-		menu.cch=(UINT)wcslen(state->Title);
+		menu.cch=(UINT)_tcslen(state->Title);
 		
 		menu.wID=idCmdFirst+i;
 		
@@ -116,7 +135,9 @@ STDMETHODIMP CIconHandler::QueryContextMenu(HMENU hmenu,
 
 // Execute a command from the context menu
 STDMETHODIMP CIconHandler::InvokeCommand(LPCMINVOKECOMMANDINFO pici)
-{	
+{
+	flog("InvokeCommand\n");
+
 	if (HIWORD(pici->lpVerb)==0)
 	{
 		UINT cmd = LOWORD(pici->lpVerb);
@@ -141,21 +162,25 @@ STDMETHODIMP CIconHandler::GetCommandString(UINT_PTR idCmd,
 {
 	USES_CONVERSION;
 
-	if ((idCmd < 0) || (idCmd > 4))
+	char text[255];
+	sprintf(text,"GetCommandString  %i %i\n",idCmd,uFlags);
+	flog(text);
+
+	if ((idCmd < 0) || (idCmd >= 4))
   {
     return E_INVALIDARG;
   }
 
-	LPCTSTR szText;
+	TCHAR szText[255];
 
 	if ((uFlags == GCS_HELPTEXTA) || (uFlags == GCS_HELPTEXTW))
 	{
 		BOOL running;
 		running=CheckLoadState();
 		if (running)
-			szText = menus[idCmd].ifLoaded.Help;
+			LoadString(GetModuleHandle(NULL),menus[idCmd].ifLoaded.Help,szText,255);
 		else
-			szText = menus[idCmd].ifNotLoaded.Help;
+			LoadString(GetModuleHandle(NULL),menus[idCmd].ifNotLoaded.Help,szText,255);
 	}
 	else if ((uFlags == GCS_VERBA) || (uFlags == GCS_VERBW))
 	{
@@ -172,7 +197,7 @@ STDMETHODIMP CIconHandler::GetCommandString(UINT_PTR idCmd,
 	}
 	else
 	{
-		strncpy(pszName, W2CA(szText), cchMax);
+		strncpy(pszName, T2CA(szText), cchMax);
 	}
 	
 	return S_OK;

@@ -7,6 +7,7 @@ STDMETHODIMP CIconHandler::DragEnter(IDataObject* pDataObject,
   POINTL pt,
   DWORD* pdwEffect)
 {
+	flog("DragEnter\n");
 	*pdwEffect=DROPEFFECT_NONE;
 
 	FORMATETC fmt = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
@@ -56,6 +57,7 @@ STDMETHODIMP CIconHandler::Drop(IDataObject* pDataObject,
   POINTL pt,
   DWORD* pdwEffect)
 {
+	flog("Drop\n");
 	FORMATETC fmt = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 	STGMEDIUM stg = { TYMED_HGLOBAL };
 	HDROP     hDrop;
@@ -81,17 +83,24 @@ STDMETHODIMP CIconHandler::Drop(IDataObject* pDataObject,
 		return E_INVALIDARG;
   }
 
+	LPTSTR start = _T("-url \"");
+	LPTSTR end = _T("\"");
+	size_t extra = _tcslen(start)+_tcslen(end);
+
 	for (UINT i = 0; i<numFiles; i++)
 	{
 		UINT count = DragQueryFile(hDrop,i,NULL,0);
 		if (count!=0)
 		{
-			wchar_t *arg = (wchar_t*)malloc((count+7)*sizeof(wchar_t));
-			wcscpy(arg,L"-url \"");
-			DragQueryFile(hDrop,i,arg+5,255);
-			wcscpy(arg+6+count,L"\"");
+			LPTSTR file = new TCHAR[count+2];
+			DragQueryFile(hDrop,i,file,count+1);
+			LPTSTR arg = new TCHAR[count+extra+1];
+			_tcscpy(arg,start);
+			_tcscat(arg,file);
+			_tcscat(arg,end);
 			ShellExecute(NULL,NULL,firefoxexe,arg,firefoxdir,SW_SHOWNORMAL);
-			free(arg);
+			delete [] arg;
+			delete [] file;
 		}
 	}
 

@@ -103,6 +103,30 @@ BEGIN
     IDS_PROJNAME            "DesktopIcon"
 END
 
+STRINGTABLE 
+BEGIN
+    IDS_STRING200           "&Browse the Internet"
+    IDS_STRING201           "Browse the Internet with Mozilla Firefox"
+    IDS_STRING202           "Open a new window"
+    IDS_STRING203           "Open a new Mozilla Firefox window"
+    IDS_STRING204           "&Profile Manager"
+    IDS_STRING205           "Opens the Mozilla Firefox profile manager"
+    IDS_STRING206           "Profile Manager"
+    IDS_STRING207           "Opens the Mozilla Firefox profile manager"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_STRING208           "&Safe Mode"
+    IDS_STRING209           "Opens Mozilla Firefox in safe mode"
+    IDS_STRING210           "Safe Mode"
+    IDS_STRING211           "Opens Mozilla Firefox in safe mode"
+    IDS_STRING212           "Mozilla Firefox &Options"
+    IDS_STRING213           "Changes settings for Mozilla Firefox"
+    IDS_STRING214           "Mozilla Firefox &Options"
+    IDS_STRING215           "Changes settings for Mozilla Firefox"
+END
+
 #endif    // English (U.K.) resources
 /////////////////////////////////////////////////////////////////////////////
 

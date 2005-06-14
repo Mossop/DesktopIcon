@@ -16,11 +16,12 @@ HKCR
 					DefaultMenu = s '{3BA5A1A3-3B65-4D3E-B99F-2D8E57C9F9D3}'
 				}
 				IconHandler = s '{3BA5A1A3-3B65-4D3E-B99F-2D8E57C9F9D3}'
+				ForceRemove {00021500-0000-0000-C000-000000000046} = s '{3BA5A1A3-3B65-4D3E-B99F-2D8E57C9F9D3}'
 				MayChangeDefaultMenu = s ''
 			}
 			ShellFolder
 			{
-				val Attributes = d 368
+				val Attributes = d 304
 				val HideOnDesktopPerUser = s ''
 			}
 		}

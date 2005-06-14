@@ -6,6 +6,7 @@ STDMETHODIMP CIconHandler::CreateViewObject(HWND hwndOwner,
  REFIID iid,
  VOID **ppvOut)
 {
+	flog("CreateViewObject\n");
 	if (iid==IID_IDropTarget)
 	{
 		return QueryInterface(iid,ppvOut);
