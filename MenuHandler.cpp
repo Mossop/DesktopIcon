@@ -2,6 +2,9 @@
 #include "stdafx.h"
 #include "IconHandler.h"
 
+// This needs to come out of the OS somewhere I guess. Or maybe the installed firefox version?
+#define LOCALE 200
+
 // May need to get this from elsewhere for localisation
 MENUITEM menus[4] = 
 {
@@ -9,14 +12,14 @@ MENUITEM menus[4] =
 		_T("open"),
 		_T(""),
 		{
-			_T("&Browse the Internet"),
-			_T("Browse the Internet with Mozilla Firefox"),
+			0,
+			1,
 			TRUE,
 			TRUE
 		},
 		{
-			_T("Open a new window"),
-			_T("Open a new Mozilla Firefox window"),
+			2,
+			3,
 			TRUE,
 			TRUE
 		},
@@ -25,14 +28,14 @@ MENUITEM menus[4] =
 		_T("profiles"),
 		_T(" -profilemanager"),
 		{
-			_T("&Profile Manager"),
-			_T("Opens the Mozilla Firefox profile manager"),
+			4,
+			5,
 			TRUE,
 			TRUE
 		},
 		{
-			_T("Profile Manager"),
-			_T("Opens the Mozilla Firefox profile manager"),
+			6,
+			7,
 			FALSE,
 			TRUE
 		},
@@ -41,14 +44,14 @@ MENUITEM menus[4] =
 		_T("safe"),
 		_T(" -safe-mode"),
 		{
-			_T("&Safe Mode"),
-			_T("Opens Mozilla Firefox in safe mode"),
+			8,
+			9,
 			TRUE,
 			TRUE
 		},
 		{
-			_T("Safe Mode"),
-			_T("Opens Mozilla Firefox in safe mode"),
+			10,
+			11,
 			FALSE,
 			TRUE
 		},
@@ -57,14 +60,14 @@ MENUITEM menus[4] =
 		_T("properties"),
 		_T(" -chrome chrome://browser/content/pref/pref.xul"),
 		{
-			_T("Mozilla Firefox &Options"),
-			_T("Changes settings for Mozilla Firefox"),
+			12,
+			13,
 			TRUE,
 			TRUE
 		},
 		{
-			_T("Mozilla Firefox &Options"),
-			_T("Changes settings for Mozilla Firefox"),
+			14,
+			15,
 			TRUE,
 			TRUE
 		},
@@ -108,8 +111,11 @@ STDMETHODIMP CIconHandler::QueryContextMenu(HMENU hmenu,
 		menu.fMask=MIIM_TYPE|MIIM_STATE|MIIM_ID;
 		
 		menu.fType=MFT_STRING;
-		menu.dwTypeData=state->Title;
-		menu.cch=(UINT)_tcslen(state->Title);
+
+		TCHAR text[255];
+		LoadString(_AtlBaseModule.GetModuleInstance(),LOCALE+state->Title,text,255);
+		menu.dwTypeData=text;
+		menu.cch=(UINT)_tcslen(text);
 		
 		menu.wID=idCmdFirst+i;
 		
@@ -171,16 +177,18 @@ STDMETHODIMP CIconHandler::GetCommandString(UINT_PTR idCmd,
     return E_INVALIDARG;
   }
 
-	TCHAR szText[255];
+	LPTSTR szText;
 
 	if ((uFlags == GCS_HELPTEXTA) || (uFlags == GCS_HELPTEXTW))
 	{
+		TCHAR text[255];
 		BOOL running;
 		running=CheckLoadState();
 		if (running)
-			LoadString(GetModuleHandle(NULL),menus[idCmd].ifLoaded.Help,szText,255);
+			LoadString(_AtlBaseModule.GetModuleInstance(),LOCALE+menus[idCmd].ifLoaded.Help,text,255);
 		else
-			LoadString(GetModuleHandle(NULL),menus[idCmd].ifNotLoaded.Help,szText,255);
+			LoadString(_AtlBaseModule.GetModuleInstance(),LOCALE+menus[idCmd].ifNotLoaded.Help,text,255);
+		szText=text;
 	}
 	else if ((uFlags == GCS_VERBA) || (uFlags == GCS_VERBW))
 	{

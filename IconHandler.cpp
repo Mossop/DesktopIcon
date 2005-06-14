@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "IconHandler.h"
 
+// Define both unicode and ascii equivalents of this interface for Win9x and WinNT
 
 // IExtractIconW
 

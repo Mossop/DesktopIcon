@@ -40,7 +40,7 @@ HKLM
 				{
 					NoRemove Explorer
 					{
-						NoRemove Desktop
+						NoRemove MyComputer
 						{
 							NoRemove Namespace
 							{
